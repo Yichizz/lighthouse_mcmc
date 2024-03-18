@@ -8,12 +8,18 @@
 # Import the necessary packages
 from helpers.mcmc_runners import metropolis_hasting
 from helpers.utils import compare_mle, plot_posterior_2d
+<<<<<<< HEAD
 from helpers.diagonistics import chain_plotter, trace_plotter, geweke_test, gelman_rubin_test
+=======
+from helpers.diagonistics import chain_plotter, trace_plotter, geweke_test
+>>>>>>> developer
 import os
 import time
 import typing 
 import numpy as np
+import arviz as az
 from scipy.stats import norm, loguniform
+
 
 # load locations and intensities of the lighthouse flashes
 # if there's a data file 'lighthouse_flash_data.txt', load the data from the file
@@ -121,3 +127,35 @@ fig3.savefig('figures/trace_plot.png')
 
 # convergence diagonistics: formal
 # first, we detect burn-in using geweke test
+<<<<<<< HEAD
+=======
+z_scores_alpha = geweke_test(chain[:,0,0], intervals = 100)
+z_scores_beta = geweke_test(chain[:,0,1], intervals = 100)
+# burn-in is the smallest number of steps such that the z-scores are without significant trend
+for n, z in z_scores_alpha:
+    if abs(z) > 1.96:
+        burn_in_alpha = n
+        break
+        
+for n, z in z_scores_beta:
+    if abs(z) > 1.96:
+        burn_in_beta = n
+        break
+
+burn_in = max(burn_in_alpha, burn_in_beta)
+print(f'burn-in detected period from the geweke test: {burn_in}')
+
+# second, we detect convergence using gelman-rubin test
+# we run 5 independent chains for different starting points
+np.random.seed(0)
+chains = []
+for i in range(5):
+    chain, _ = metropolis_hasting(10000, log_posterior, 1, 2, np.random.rand(2), locations)
+    chains.append(chain)
+
+chains= az.convert_to_dataset(chains, group='posterior')
+# calculate the Gelman-Rubin statistic
+r_hat = az.rhat(chains)
+
+
+>>>>>>> developer

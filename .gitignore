@@ -7,5 +7,5 @@ docs/*
 #ignore figures
 figures/*
 
-#ignore cache
-*__pycache__*
+#ignore everyting in pycache
+helpers/__pycache__/*
