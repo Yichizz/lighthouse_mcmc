@@ -8,7 +8,7 @@
 # Import the necessary packages
 from helpers.mcmc_runners import metropolis_hasting
 from helpers.utils import compare_mle, plot_posterior_2d
-from helpers.diagonistics import chain_plotter, trace_plotter
+from helpers.diagonistics import chain_plotter, trace_plotter, geweke_test, gelman_rubin_test
 import os
 import time
 import typing 
@@ -118,4 +118,6 @@ fig2 = chain_plotter(chain, ['alpha', 'beta'])
 fig2.savefig('figures/chain_plot.png')
 fig3 = trace_plotter(chain, posterior, ['alpha', 'beta'], steps = 150, data = locations)
 fig3.savefig('figures/trace_plot.png')
-# plot autocorrelation
+
+# convergence diagonistics: formal
+# first, we detect burn-in using geweke test
