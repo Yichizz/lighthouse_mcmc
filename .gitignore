@@ -1,2 +1,5 @@
 # ignore notebooks
 *.ipynb
+# ingore files in docs expect for Doxyfile
+docs/*
+!docs/Doxyfile
