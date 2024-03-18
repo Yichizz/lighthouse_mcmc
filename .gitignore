@@ -3,3 +3,9 @@
 # ingore files in docs expect for Doxyfile
 docs/*
 !docs/Doxyfile
+
+#ignore figures
+figures/*
+
+#ignore cache
+*__pycache__*
