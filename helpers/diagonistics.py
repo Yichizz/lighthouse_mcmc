@@ -16,6 +16,7 @@ The functions include:
 import typing
 import numpy as np
 import matplotlib.pyplot as plt
+from statsmodels.regression.linear_model import yule_walker
 
 def chain_plotter(chain : np.array, labels : typing.List[str]) -> plt.figure:
     """@brief Plot the chains
@@ -77,3 +78,64 @@ def trace_plotter(chain : np.array, posterior : typing.Callable, labels : typing
     plt.tight_layout()
 
     return fig
+
+def spec(x : np.array) -> float:
+    """@brief Spectral density
+
+        @details This function returns the spectral density of the input time series.
+
+        @param x: np.array, the input time series
+
+        @return float, the spectral density
+    """
+
+    rho, sigma = yule_walker(x, 1)
+    return sigma**2 / (1 - rho**2)
+
+def geweke_test(chain : np.array, first : float = 0.1, last : float = 0.5, intervals : int = 20) -> typing.List[typing.Tuple[int, float]]:
+    """@brief Geweke test
+
+        @details This function runs the Geweke test to informally diagnose the convergence of the MCMC algorithm.
+        The Geweke test compares the mean of the first % of the series with the mean of the last % of the series.
+        If the series is converged, this score should oscillate between -1 and 1.
+
+        @param chain: np.array, the generated chain
+        @param first: float, the fraction of series at the beginning of the trace
+        @param last: float, the fraction of series at the end to be compared with the section at the beginning
+        @param intervals: int, the number of segments
+
+        @return z_scored: np.array, the z-scores
+    """
+
+    if np.ndim(chain) > 1:
+        return [geweke_test(y, first, last, intervals) for y in np.transpose(chain)]
+
+    # Filter out invalid intervals
+    if first + last >= 1:
+        raise ValueError(
+            "Invalid intervals for Geweke convergence analysis",
+            (first, last))
+
+    # Initialize list of z-scores
+    zscores = [None] * intervals
+
+    # Starting points for calculations
+    starts = np.linspace(0, int(len(chain)*(1.-last)), intervals).astype(int)
+
+    # Loop over start indices
+    for i,s in enumerate(starts):
+
+        # Size of remaining array
+        chain_trunc = chain[s:]
+        n = len(chain_trunc)
+
+        # Calculate slices
+        first_slice = chain_trunc[:int(first * n)]
+        last_slice = chain_trunc[int(last * n):]
+
+        z = (first_slice.mean() - last_slice.mean())
+        z /= np.sqrt(spec(first_slice)/len(first_slice) +
+                     spec(last_slice)/len(last_slice))
+        zscores[i] = len(chain) - n, z
+
+    return zscores
