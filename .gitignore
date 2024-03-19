@@ -8,4 +8,4 @@ docs/*
 figures/*
 
 #ignore everyting in pycache
-helpers/__pycache__/*
+*/__pycache__/
