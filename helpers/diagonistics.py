@@ -139,3 +139,4 @@ def geweke_test(chain : np.array, first : float = 0.1, last : float = 0.5, inter
         zscores[i] = len(chain) - n, z
 
     return zscores
+

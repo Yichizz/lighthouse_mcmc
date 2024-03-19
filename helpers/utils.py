@@ -11,6 +11,8 @@ including
 # Import the necessary packages
 import typing
 import numpy as np
+import pandas as pd
+import seaborn as sns
 import matplotlib.pyplot as plt
 from scipy.optimize import minimize
 
@@ -70,4 +72,22 @@ def plot_posterior_2d(data : np.array, posterior : typing.Callable, alpha_range 
     plt.colorbar()
     plt.tight_layout()
 
+    return fig
+
+def plot_histogram(samples : np.array, labels : list[str], contour = True) -> plt.figure:
+    """@brief Plot the histogram of the samples
+
+        @details This function plots the histogram of the samples.
+
+        @param samples: np.array, the samples
+        @param labels: list[str], the labels for the histogram
+        @param kde: bool, whether to plot the kernel density estimatE
+
+        @return fig: plt.figure, the figure object
+    """
+    df = pd.DataFrame({labels[0]: samples[:,0], labels[1]: samples[:,1]})
+    fig  = sns.pairplot(df, kind='hist', corner=True, plot_kws={'color': 'lightblue'}, diag_kws={'color': 'lightblue'})
+    if contour:
+        fig.map_lower(sns.kdeplot, levels=[0.1,0.3,0.5,0.7,0.9], colors = 'darkblue')
+    plt.tight_layout()
     return fig

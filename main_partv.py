@@ -2,28 +2,33 @@
 @brief This is the main page for the solutions for lighthouse problem
 
 @details This contains all the codes you need to reproduce all the figures and results in the report.
+Usage: python main_partv.py --nsteps 10000
 @author Created by Yichi Zhang (yz870) on 18/03/2024
 """
 
 # Import the necessary packages
 from helpers.mcmc_runners import metropolis_hasting
-from helpers.utils import compare_mle, plot_posterior_2d
-<<<<<<< HEAD
-from helpers.diagonistics import chain_plotter, trace_plotter, geweke_test, gelman_rubin_test
-=======
+from helpers.utils import compare_mle, plot_posterior_2d, plot_histogram
 from helpers.diagonistics import chain_plotter, trace_plotter, geweke_test
->>>>>>> developer
 import os
 import time
 import typing 
 import numpy as np
 import arviz as az
+from emcee.autocorr import integrated_time
 from scipy.stats import norm, loguniform
 
+# get number of steps from the command line
+import argparse
+parser = argparse.ArgumentParser(description='Run the MCMC algorithm for the lighthouse problem')
+parser.add_argument('--nsteps', type=int, help='number of steps for the MCMC algorithm')
+if parser.parse_args().nsteps is not None:
+    nsteps = parser.parse_args().nsteps
+else:
+    nsteps = 10000
 
 # load locations and intensities of the lighthouse flashes
 # if there's a data file 'lighthouse_flash_data.txt', load the data from the file
-
 try:
     data = np.loadtxt('lighthouse_flash_data.txt')
     print('Data loaded from file')
@@ -83,6 +88,7 @@ def nll(params : np.array, data : np.array) -> float:
 print('Part iii) Compare the MLE of alpha and the mean of the data')
 compare_mle(locations, nll)
 
+print('Part iv) We use a normal prior for alpha and a log-uniform prior for beta')
 # part v) run the Metropolis-Hasting algorithm to draw samples from the posterior distribution
 # we first investigate how the posterior distribution looks like
 if not os.path.exists('figures'):
@@ -111,12 +117,12 @@ def log_posterior(params : tuple, data : np.array) -> float:
 np.random.seed(0)
 begin_time = time.time()
 print("Part v) running the Metropolis-Hasting algorithm")
-chain, num_accept = metropolis_hasting(10000, log_posterior, 1, 2, np.array([0, 1]), locations)
+chain, num_accept = metropolis_hasting(nsteps, log_posterior, 1, 2, np.array([0, 1]), locations)
 end_time = time.time()
 time_taken = end_time - begin_time
 print(f'running time: {time_taken} seconds')
-print(f'acceptance rate: {num_accept/10000}')
-print(f'time per step: {time_taken/10000} seconds')
+print(f'acceptance rate: {num_accept/nsteps*100}%')
+print(f'time per step: {time_taken/nsteps} seconds')
 
 # convergence diagonistics: informal
 # plot the chain and trace
@@ -127,8 +133,6 @@ fig3.savefig('figures/trace_plot.png')
 
 # convergence diagonistics: formal
 # first, we detect burn-in using geweke test
-<<<<<<< HEAD
-=======
 z_scores_alpha = geweke_test(chain[:,0,0], intervals = 100)
 z_scores_beta = geweke_test(chain[:,0,1], intervals = 100)
 # burn-in is the smallest number of steps such that the z-scores are without significant trend
@@ -149,13 +153,38 @@ print(f'burn-in detected period from the geweke test: {burn_in}')
 # we run 5 independent chains for different starting points
 np.random.seed(0)
 chains = []
+print('running 5 independent chains')
 for i in range(5):
-    chain, _ = metropolis_hasting(10000, log_posterior, 1, 2, np.random.rand(2), locations)
-    chains.append(chain)
+    chain_i, _ = metropolis_hasting(nsteps, log_posterior, 1, 2, np.random.rand(2), locations)
+    chain_i = chain_i.reshape(2, nsteps,1)
+    # discard the burn-in
+    chain_i = chain_i[:,burn_in:,:]
+    chains.append(chain_i)
 
+# convert the chains to np.array
+chains = np.concatenate(chains, axis=2)
 chains= az.convert_to_dataset(chains, group='posterior')
 # calculate the Gelman-Rubin statistic
 r_hat = az.rhat(chains)
+print(f'Gelman-Rubin statistic: {r_hat['x'].values}')
+# if the r_hat is close to 1, the chains are converged
 
+# compute the autocorrelation time
+tau = np.max([integrated_time(chain[:,0,k])for k in [0,1]])
+print(f'autocorrelation time: {tau}')
+# compute the effective sample size
+iid_samples = chain[burn_in::2*int(tau), 0, :]
+num_iid_samples = iid_samples.shape[0]
+print(f'effective sample size: {num_iid_samples}')
+print(f'percentage of effective sample size: {num_iid_samples/nsteps*100}%')
+print(f'time per effective sample: {num_iid_samples/time_taken} seconds')
 
->>>>>>> developer
+# histogram of the joint and marginal samples
+fig = plot_histogram(iid_samples, ['alpha', 'beta'], contour=True)
+fig.savefig('figures/histogram.png')
+print(f'joint and marginal samples saved to figures/histogram.png')
+
+# show estimated mean and standard deviation
+print('---------Final Results---------')
+print(f'alpha {np.mean(iid_samples[:,0])} +/- {np.std(iid_samples[:,0])}')
+print(f'beta {np.mean(iid_samples[:,1])} +/- {np.std(iid_samples[:,1])}')
