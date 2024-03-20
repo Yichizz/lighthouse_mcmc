@@ -1,5 +1,5 @@
-"""!@mainpage Lighthouse Problem
-@brief This is the main page for the solutions for lighthouse problem
+"""!@file main_partv.py
+@brief This is the main page for the solutions for lighthouse problem from part iii) to part v) in the report.
 
 @details This contains all the codes you need to reproduce all the figures and results in the report.
 Usage: python main_partv.py --nsteps 10000
@@ -12,7 +12,6 @@ from helpers.utils import compare_mle, plot_posterior_2d, plot_histogram
 from helpers.diagonistics import chain_plotter, trace_plotter, geweke_test
 import os
 import time
-import typing 
 import numpy as np
 import arviz as az
 from emcee.autocorr import integrated_time
@@ -36,7 +35,6 @@ except:
     raise FileNotFoundError('Data file not found')
 
 locations = data[:,0]
-intensities = data[:,1]
 
 # define our model for the lighthouse problem
 @np.vectorize
@@ -72,7 +70,7 @@ def posterior(x : np.array, alpha : float, beta : float) -> float:
         @param alpha: float, the location parameter
         @param beta: float, the scale parameter
     """
-    return likelihood(x, alpha, beta) * loguniform.pdf(beta, 0.01, 5) * norm.pdf(alpha, 1.6,4)
+    return likelihood(x, alpha, beta) * loguniform.pdf(beta, 0.01, 5) * norm.pdf(alpha, 0,4)
 
 # part iii) numerically we compare the mle of alpha and mean and medium of the data
 def nll(params : np.array, data : np.array) -> float:
@@ -177,7 +175,7 @@ iid_samples = chain[burn_in::2*int(tau), 0, :]
 num_iid_samples = iid_samples.shape[0]
 print(f'effective sample size: {num_iid_samples}')
 print(f'percentage of effective sample size: {num_iid_samples/nsteps*100}%')
-print(f'time per effective sample: {num_iid_samples/time_taken} seconds')
+print(f'time per effective sample: {time_taken/num_iid_samples} seconds')
 
 # histogram of the joint and marginal samples
 fig = plot_histogram(iid_samples, ['alpha', 'beta'], contour=True)
