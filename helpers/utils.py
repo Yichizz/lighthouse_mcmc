@@ -85,7 +85,7 @@ def plot_histogram(samples : np.array, labels : list[str], contour = True) -> pl
 
         @return fig: plt.figure, the figure object
     """
-    df = pd.DataFrame({labels[0]: samples[:,0], labels[1]: samples[:,1]})
+    df = pd.DataFrame({label: samples[:,i] for i, label in enumerate(labels)})
     fig  = sns.pairplot(df, kind='hist', corner=True, plot_kws={'color': 'lightblue'}, diag_kws={'color': 'lightblue'})
     if contour:
         fig.map_lower(sns.kdeplot, levels=[0.1,0.3,0.5,0.7,0.9], colors = 'darkblue')

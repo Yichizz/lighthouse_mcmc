@@ -211,8 +211,8 @@ print(f'percentage of effective sample size: {num_iid_samples/nsteps*100}%')
 print(f'time per effective sample: {time_taken/num_iid_samples} seconds')
 
 # histogram of the joint and marginal samples
-fig = plot_histogram(iid_samples, ['alpha', 'beta'], contour=True)
-fig.savefig('figures/histogram.png')
+fig = plot_histogram(iid_samples, ['I0', 'alpha', 'beta'], contour=True)
+fig.savefig('figures/histogram_3d.png')
 print(f'joint and marginal samples saved to figures/histogram.png')
 
 # show estimated mean and standard deviation
