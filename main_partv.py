@@ -131,8 +131,8 @@ fig3.savefig('figures/trace_plot.png')
 
 # convergence diagonistics: formal
 # first, we detect burn-in using geweke test
-z_scores_alpha = geweke_test(chain[:,0,0], intervals = 100)
-z_scores_beta = geweke_test(chain[:,0,1], intervals = 100)
+z_scores_alpha = geweke_test(chain[:,0,0], intervals = 20)
+z_scores_beta = geweke_test(chain[:,0,1], intervals = 20)
 # burn-in is the smallest number of steps such that the z-scores are without significant trend
 for n, z in z_scores_alpha:
     if abs(z) > 1.96:
@@ -156,11 +156,11 @@ for i in range(5):
     chain_i, _ = metropolis_hasting(nsteps, log_posterior, 1, 2, np.random.rand(2), locations)
     chain_i = chain_i.reshape(2, nsteps,1)
     # discard the burn-in
-    chain_i = chain_i[:,burn_in:,:]
-    chains.append(chain_i)
+    chain_i = chain_i[:,burn_in:,:] 
+    chains.append(chain_i) 
 
-# convert the chains to np.array
-chains = np.concatenate(chains, axis=2)
+# convert the chains to np.array shape (5, nsteps-burn_in, 2)
+chains = np.concatenate(chains, axis=2).transpose(2,1,0)
 chains= az.convert_to_dataset(chains, group='posterior')
 # calculate the Gelman-Rubin statistic
 r_hat = az.rhat(chains)

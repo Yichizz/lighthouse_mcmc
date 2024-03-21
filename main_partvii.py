@@ -118,9 +118,8 @@ def posterior(positions : np.array, intensities : np.array, I_0 : float, alpha :
     return likelihood(positions, intensities, I_0, alpha, beta) * prior(I_0, alpha, beta, I_0_min)
 
 # visualize the posterior distribution for different values of I_0
-fig1 = plot_posterior_3d(locations, intensity, posterior, I_0s = [8,16,24], alpha_range = np.array([-2,2]), beta_range = np.array([0,4]))
-fig1.savefig('figures/posterior_3d.png')
-
+# fig1 = plot_posterior_3d(locations, intensity, posterior, I_0s = [8,16,24], alpha_range = np.array([-2,2]), beta_range = np.array([0,4]))
+# fig1.savefig('figures/posterior_3d.png')
 
 # part vii) we use emcee to sample from the posterior distribution
 def log_posterior(params : np.array, locations : np.array, intensities : np.array) -> float:
@@ -177,26 +176,34 @@ fig.savefig('figures/chains.png')
 
 # convergence diagonistics: formal
 # first, we detect burn-in using geweke test
-for n in range(nwalkers):
-    z_scores_i0 = geweke_test(sampler.chain[n,:,0], intervals = 100)
-    z_scores_alpha = geweke_test(sampler.chain[n,:,1], intervals = 100)
-    z_scores_beta = geweke_test(sampler.chain[n,:,2], intervals = 100)
-    
-    
+burn_in = []
+for c, chain in enumerate(sampler.chain):
+    num_steps, num_dim = chain.shape
+    for i in range(num_dim):
+        z_scores = geweke_test(chain[:,i], intervals=20)
+        for n, z in z_scores:
+            if np.abs(z) > 1.96 and n>0:
+                burn_in.append(n)
+                break
 
+print(f'average burn-in detected from geweke test: {np.mean(burn_in)}')
+discard = int(np.ceil(np.mean(burn_in)))
+        
 # second, we detect convergence using gelman-rubin test
-
-
+chains = sampler.get_chain(discard=discard).transpose(1,0,2)
+chains= az.convert_to_dataset(chains, group='posterior')
 # calculate the Gelman-Rubin statistic
-
-
+r_hat = az.rhat(chains)
 # if the r_hat is close to 1, the chains are converged
 
 # compute the autocorrelation time
-
+taus = sampler.get_autocorr_time(tol=2, discard=discard)
+tau = np.max(taus)
+print(f'autocorrelation time: {tau}')
 
 # compute the effective sample size
-
+iid_samples = sampler.get_chain(discard=discard, thin=int(tau), flat=True)
+num_iid_samples = iid_samples.shape[0]
 
 time_taken = t_end - t_start
 print(f'effective sample size: {num_iid_samples}')

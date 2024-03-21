@@ -110,7 +110,7 @@ def plot_posterior_3d(locations, intensity, posterior, I_0s = [8,16,24], alpha_r
     """
 
     X,Y = np.meshgrid(np.linspace(alpha_range[0], alpha_range[1], 100), np.linspace(beta_range[0], beta_range[1], 100))
-    fig, axes = plt.subplots(1, len(I_0s), figsize=(20,5))
+    fig, axes = plt.subplots(1, len(I_0s), figsize=(20,6))
     for i, I_0 in enumerate(I_0s):
         posts = np.array([posterior(locations, intensity, I_0, alpha, beta) for alpha, beta in zip(X.ravel(), Y.ravel())]).reshape(X.shape)
         axes[i].contour(X, Y, posts, colors='black', linewidths=1)
