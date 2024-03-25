@@ -5,7 +5,7 @@ docs/*
 !docs/Doxyfile
 
 #ignore figures
-figures/*
+figures/
 
 #ignore everyting in pycache
 */__pycache__/

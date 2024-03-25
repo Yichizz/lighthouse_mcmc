@@ -66,7 +66,6 @@ def plot_posterior_2d(data : np.array, posterior : typing.Callable, alpha_range 
     plt.contourf(alpha, beta, posterior_vals, 100, cmap='GnBu')
     plt.xlabel('alpha')
     plt.ylabel('beta')
-    plt.title('2-d unnormalized posterior for alpha and beta')
     plt.xlim(alpha_range[0], alpha_range[1])
     plt.ylim(beta_range[0], beta_range[1])
     plt.colorbar()

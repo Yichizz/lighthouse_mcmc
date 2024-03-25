@@ -2,7 +2,7 @@
 @brief This is the main page for the solutions for lighthouse problem from part vi) to part viii) in the report.
 
 @details This contains all the codes you need to reproduce all the figures and results in the report.
-Usage: python main_partvii.py --nsteps 10000
+Usage: python main_part2.py --nsteps 10000
 @author Created by Yichi Zhang (yz870) on 19/03/2024
 """
 
@@ -217,6 +217,6 @@ print(f'joint and marginal samples saved to figures/histogram.png')
 
 # show estimated mean and standard deviation
 print('---------Final Results---------')
-print(f'alpha {np.mean(iid_samples[:,0])} +/- {np.std(iid_samples[:,0])}')
-print(f'beta {np.mean(iid_samples[:,1])} +/- {np.std(iid_samples[:,1])}')
-print(f'I_0 {np.mean(iid_samples[:,2])} +/- {np.std(iid_samples[:,2])}')
+print(f'I_0 {np.mean(iid_samples[:,0])} +/- {np.std(iid_samples[:,0])}')
+print(f'alpha {np.mean(iid_samples[:,1])} +/- {np.std(iid_samples[:,1])}')
+print(f'beta {np.mean(iid_samples[:,2])} +/- {np.std(iid_samples[:,2])}')

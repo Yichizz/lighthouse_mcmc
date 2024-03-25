@@ -2,7 +2,7 @@
 @brief This is the main page for the solutions for lighthouse problem from part iii) to part v) in the report.
 
 @details This contains all the codes you need to reproduce all the figures and results in the report.
-Usage: python main_partv.py --nsteps 10000
+Usage: python main_part1.py --nsteps 10000
 @author Created by Yichi Zhang (yz870) on 18/03/2024
 """
 
