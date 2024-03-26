@@ -186,7 +186,7 @@ for c, chain in enumerate(sampler.chain):
                 burn_in.append(n)
                 break
 
-print(f'average burn-in detected from geweke test: {np.mean(burn_in)}')
+print(f'average burn-in detected from geweke test: {int(np.ceil(np.mean(burn_in)))}')
 discard = int(np.ceil(np.mean(burn_in)))
         
 # second, we detect convergence using gelman-rubin test
@@ -195,6 +195,7 @@ chains= az.convert_to_dataset(chains, group='posterior')
 # calculate the Gelman-Rubin statistic
 r_hat = az.rhat(chains)
 # if the r_hat is close to 1, the chains are converged
+print(f'Gelman-Rubin statistic: {r_hat["x"].values}')
 
 # compute the autocorrelation time
 taus = sampler.get_autocorr_time(tol=2, discard=discard)
