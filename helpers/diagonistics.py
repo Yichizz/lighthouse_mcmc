@@ -8,7 +8,6 @@ The functions include:
 - trace_plotter
 - geweke_test
 - gelman_rubin_test
-- effective_sample_size
 
 @author Created by Yichi Zhang (yz870) on 18/03/2024
 """

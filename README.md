@@ -23,7 +23,7 @@ There 2 two main scripts, called main_part1.py and main_part2.py, containing sol
 ```
 python main_part1.py --nsteps 10000
 ```
-Results will be displayed after execution, and figures will be saved as .png files in the figures folder. The helpers package in the src folder contains modules for Metropolis-Hasting sampling, graph generation, and sampling diagonistics, which are imported and used in the main codes. To generate documentations of the helpers package, you need to install doxygen, and run
+Results will be displayed after execution, and figures will be saved as .png files in the figures folder. The helpers package contains modules for Metropolis-Hasting sampling, graph generation, and sampling diagonistics, which are imported and used in the main codes. To generate documentations of the helpers package, you need to install doxygen, and run
 ```
 cd docs
 doxygen

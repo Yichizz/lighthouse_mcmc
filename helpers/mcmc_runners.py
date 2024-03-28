@@ -1,5 +1,5 @@
 """!@file yz870/helpers/mcmc_runners.py
-@brief This file contains the classes and functions to run MCMC simulations
+@brief This file contains the Metropolis-Hasting sampling to run MCMC simulations
 
 @details run markov chain monte carlo simulations to estimate the parameters of the lighthouse problem
 @author Created by Yichi Zhang (yz870) on 18/03/2024
@@ -50,4 +50,3 @@ def metropolis_hasting(nsteps : int, log_target : typing.Callable, delta : float
             x_new = x_current                      # REJECT
         chain[i+1,0] = x_new                       # store new position in chain
     return chain, num_accept                     # store new position in chain
-

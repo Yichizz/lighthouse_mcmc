@@ -4,6 +4,8 @@
 @details This file contains the utility functions for the lighthouse problem, 
 including
 - a function to compare the maximum likelihood estimates of alpha and mean of the data
+- a function to plot the 2D posterior distribution
+- a function to plot the histogram of the samples from the MCMC algorithm
 
 @author Created by Yichi Zhang (yz870) on 18/03/2024
 """
@@ -90,34 +92,3 @@ def plot_histogram(samples : np.array, labels : list[str], contour = True) -> pl
         fig.map_lower(sns.kdeplot, levels=[0.1,0.3,0.5,0.7,0.9], colors = 'darkblue')
     plt.tight_layout()
     return fig
-
-def plot_posterior_3d(locations, intensity, posterior, I_0s = [8,16,24], alpha_range = np.array([-2,2]), beta_range = np.array([0,4])):
-    """@brief Plot the 3D posterior distribution
-
-        @details This function plots the 3D posterior distribution of the parameters I_0, alpha and beta.
-        The range being plotted is specified by alpha_range and beta_range.
-        The I_0s are the values of I_0 to be plotted.
-
-        @param locations: np.array, the locations of the lighthouse flashes
-        @param intensity: np.array, the intensities of the lighthouse flashes
-        @param posterior: function, the posterior distribution
-        @param I_0s: list[float], the values of I_0
-        @param alpha_range: np.array, the range of alpha values
-        @param beta_range: np.array, the range of beta values
-
-        @return fig: plt.figure, the figure object
-    """
-
-    X,Y = np.meshgrid(np.linspace(alpha_range[0], alpha_range[1], 100), np.linspace(beta_range[0], beta_range[1], 100))
-    fig, axes = plt.subplots(1, len(I_0s), figsize=(20,6))
-    for i, I_0 in enumerate(I_0s):
-        posts = np.array([posterior(locations, intensity, I_0, alpha, beta) for alpha, beta in zip(X.ravel(), Y.ravel())]).reshape(X.shape)
-        axes[i].contour(X, Y, posts, colors='black', linewidths=1)
-        axes[i].contourf(X, Y, posts, 100, cmap='GnBu')
-        axes[i].set_title(f'I_0 = {I_0}')
-        axes[i].set_xlabel('alpha')
-        axes[i].set_ylabel('beta')
-    plt.tight_layout()
-
-    return fig
-    
