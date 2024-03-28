@@ -19,11 +19,11 @@ conda activate cw_s2
 ```
 
 ## Usage
-There 2 two main scripts, called main_part1.py and main_part2.py, containing solutions to questions i to v and solutions to questions vi to viii respectively. To run them on the command line, you need to specify the number of steps for MCMC simulations to run after --nsteps, e.g.
+There 2 two main scripts, called *main_part1.py* and *main_part2.py*, containing solutions to questions i to v and solutions to questions vi to viii respectively. To run them on the command line, you need to specify the number of steps for MCMC simulations to run after --nsteps, e.g.
 ```
 python main_part1.py --nsteps 10000
 ```
-Results will be displayed after execution, and figures will be saved as .png files in the figures folder. The helpers package contains modules for Metropolis-Hasting sampling, graph generation, and sampling diagonistics, which are imported and used in the main codes. To generate documentations of the helpers package, you need to install doxygen, and run
+Results will be displayed after execution, and figures will be saved as .png files in the figures folder. The helpers package contains modules for Metropolis-Hasting sampling, graph generation, and sampling diagonistics, which are imported and used in the main codes. To generate pdf or html documentations of the helpers package, you need to install doxygen, and run
 ```
 cd docs
 doxygen
