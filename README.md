@@ -9,11 +9,11 @@ This project contains the codes used for solving the lighthouse problem describe
 To install this project, follow these steps:
 1. Clone from the Gitlab Repository
 ```
-git clone https://gitlab.developers.cam.ac.uk/phy/data-intensive-science-mphil/S2_Assessment/yz870.git
+git clone https://github.com/Yichizz/lighthouse_mcmc.git
 ```
 2. Create and activate new conda environment
 ```
-cd yz870
+cd lighthouse_mcmc
 conda env create -f environment.yml
 conda activate cw_s2
 ```
